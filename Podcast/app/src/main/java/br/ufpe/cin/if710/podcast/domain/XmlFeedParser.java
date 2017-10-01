@@ -95,7 +95,16 @@ public class XmlFeedParser {
         return new ItemFeed(title, link, pubDate, description, downloadLink);
     }
 
-    // Processa tags de forma parametrizada no feed.
+    // Processa tags do tipo <enclosure> para obter dados do episodio
+    public static String readEnclosure(XmlPullParser parser)
+            throws IOException, XmlPullParserException {
+        parser.require(XmlPullParser.START_TAG, null, "enclosure");
+        String url = readAttribute(parser, "url");
+        parser.nextTag();
+        return url;
+    }
+
+    // Processes tags in a parametrized way
     public static String readData(XmlPullParser parser, String tag)
             throws IOException, XmlPullParserException {
         parser.require(XmlPullParser.START_TAG, null, tag);
@@ -114,16 +123,14 @@ public class XmlFeedParser {
         return result;
     }
 
-    // Processa tags do tipo <enclosure> para obter dados do episodio
-    public static String readEnclosure(XmlPullParser parser)
-            throws IOException, XmlPullParserException {
-        parser.require(XmlPullParser.START_TAG, null, "enclosure");
-        String url = parser.getAttributeValue(null, "url");
-        parser.nextTag();
-        return url;
+    // Processes tag attributes in a parametrized way
+    private static String readAttribute(XmlPullParser parser, String attr) {
+        String value = parser.getAttributeValue(null, attr);
+
+        return value != null ? value : "";
     }
 
-        public static void skip(XmlPullParser parser)
+    public static void skip(XmlPullParser parser)
             throws XmlPullParserException, IOException {
         if (parser.getEventType() != XmlPullParser.START_TAG) {
             throw new IllegalStateException();
