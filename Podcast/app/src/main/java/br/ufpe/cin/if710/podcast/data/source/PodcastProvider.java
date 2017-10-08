@@ -1,4 +1,4 @@
-package br.ufpe.cin.if710.podcast.db;
+package br.ufpe.cin.if710.podcast.data;
 
 import android.content.ContentProvider;
 import android.content.ContentValues;

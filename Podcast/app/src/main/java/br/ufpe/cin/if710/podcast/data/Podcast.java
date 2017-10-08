@@ -1,4 +1,4 @@
-package br.ufpe.cin.if710.podcast.domain;
+package br.ufpe.cin.if710.podcast.data;
 
 public class ItemFeed {
     private final String title;
