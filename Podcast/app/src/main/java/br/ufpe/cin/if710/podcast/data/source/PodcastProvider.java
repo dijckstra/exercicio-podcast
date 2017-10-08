@@ -1,50 +1,164 @@
-package br.ufpe.cin.if710.podcast.data;
+package br.ufpe.cin.if710.podcast.data.source;
 
 import android.content.ContentProvider;
 import android.content.ContentValues;
+import android.content.UriMatcher;
 import android.database.Cursor;
+import android.database.SQLException;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
+import android.support.annotation.NonNull;
+
+import br.ufpe.cin.if710.podcast.data.source.local.PodcastDatabaseHelper;
+import br.ufpe.cin.if710.podcast.data.source.local.PodcastPersistenceContract;
 
 public class PodcastProvider extends ContentProvider {
-    public PodcastProvider() {
-    }
 
-    @Override
-    public int delete(Uri uri, String selection, String[] selectionArgs) {
-        // Implement this to handle requests to delete one or more rows.
-        throw new UnsupportedOperationException("Not yet implemented");
-    }
+    private static final int PODCAST = 100;
+    private static final int PODCAST_ITEM = 101;
+    private static final UriMatcher uriMatcher = buildUriMatcher();
 
-    @Override
-    public String getType(Uri uri) {
-        // TODO: Implement this to handle requests for the MIME type of the data
-        // at the given URI.
-        throw new UnsupportedOperationException("Not yet implemented");
-    }
+    private PodcastDatabaseHelper databaseHelper;
 
-    @Override
-    public Uri insert(Uri uri, ContentValues values) {
-        // TODO: Implement this to handle requests to insert a new row.
-        throw new UnsupportedOperationException("Not yet implemented");
+    private static UriMatcher buildUriMatcher() {
+        final UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
+        final String authority = PodcastPersistenceContract.CONTENT_AUTHORITY;
+
+        matcher.addURI(authority, PodcastPersistenceContract.PodcastEntry.TABLE_NAME, PODCAST);
+        matcher.addURI(authority, PodcastPersistenceContract.PodcastEntry.TABLE_NAME + "/*", PODCAST_ITEM);
+
+        return matcher;
     }
 
     @Override
     public boolean onCreate() {
-        // TODO: Implement this to initialize your content provider on startup.
-        return false;
+        databaseHelper = new PodcastDatabaseHelper(getContext());
+        return true;
+    }
+
+    @Override
+    public String getType(Uri uri) {
+        final int match = uriMatcher.match(uri);
+        switch (match) {
+            case PODCAST:
+                return PodcastPersistenceContract.CONTENT_PODCAST_TYPE;
+            case PODCAST_ITEM:
+                return PodcastPersistenceContract.CONTENT_PODCAST_ITEM_TYPE;
+            default:
+                throw new UnsupportedOperationException("Unknown URI: " + uri);
+        }
     }
 
     @Override
     public Cursor query(Uri uri, String[] projection, String selection,
                         String[] selectionArgs, String sortOrder) {
-        // TODO: Implement this to handle query requests from clients.
-        throw new UnsupportedOperationException("Not yet implemented");
+        Cursor retCursor;
+
+        switch (uriMatcher.match(uri)) {
+            case PODCAST:
+                retCursor = databaseHelper.getReadableDatabase().query(
+                        PodcastPersistenceContract.PodcastEntry.TABLE_NAME,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder
+                );
+                break;
+            case PODCAST_ITEM:
+                String[] where = {uri.getLastPathSegment()};
+                retCursor = databaseHelper.getReadableDatabase().query(
+                        PodcastPersistenceContract.PodcastEntry.TABLE_NAME,
+                        projection,
+                        PodcastPersistenceContract.PodcastEntry._ID + " = ?",
+                        where,
+                        null,
+                        null,
+                        sortOrder
+                );
+                break;
+            default:
+                throw new UnsupportedOperationException("Unknown URI: " + uri);
+        }
+
+        retCursor.setNotificationUri(getContext().getContentResolver(), uri);
+        return retCursor;
+    }
+
+    @Override
+    public Uri insert(@NonNull Uri uri, ContentValues values) {
+        SQLiteDatabase database = databaseHelper.getWritableDatabase();
+        Uri returnUri;
+
+        switch (uriMatcher.match(uri)) {
+            case PODCAST:
+                long _id = database.insert(
+                        PodcastPersistenceContract.PodcastEntry.TABLE_NAME,
+                        null,
+                        values
+                );
+                if (_id > 0) {
+                    returnUri = PodcastPersistenceContract.PodcastEntry.buildPodcastsUriWith(_id);
+                } else {
+                    throw new SQLException("Failed to insert row into " + uri);
+                }
+                break;
+            default:
+                throw new UnsupportedOperationException("Unknown URI: " + uri);
+        }
+
+        getContext().getContentResolver().notifyChange(uri, null);
+        return returnUri;
     }
 
     @Override
     public int update(Uri uri, ContentValues values, String selection,
                       String[] selectionArgs) {
-        // TODO: Implement this to handle requests to update one or more rows.
-        throw new UnsupportedOperationException("Not yet implemented");
+        SQLiteDatabase database = databaseHelper.getWritableDatabase();
+        int rowsUpdated;
+
+        switch (uriMatcher.match(uri)) {
+            case PODCAST:
+                rowsUpdated = database.update(
+                        PodcastPersistenceContract.PodcastEntry.TABLE_NAME,
+                        values,
+                        selection,
+                        selectionArgs
+                );
+                break;
+            default:
+                throw new UnsupportedOperationException("Unknown URI: " + uri);
+        }
+
+        if (rowsUpdated != 0) {
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
+
+        return rowsUpdated;
+    }
+
+    @Override
+    public int delete(Uri uri, String selection, String[] selectionArgs) {
+        final SQLiteDatabase database = databaseHelper.getWritableDatabase();
+        int rowsDeleted;
+
+        switch (uriMatcher.match(uri)) {
+            case PODCAST:
+                rowsDeleted = database.delete(
+                        PodcastPersistenceContract.PodcastEntry.TABLE_NAME,
+                        selection,
+                        selectionArgs
+                );
+                break;
+            default:
+                throw new UnsupportedOperationException("Unknown URI: " + uri);
+        }
+
+        if (selection == null || rowsDeleted != 0) {
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
+
+        return rowsDeleted;
     }
 }
