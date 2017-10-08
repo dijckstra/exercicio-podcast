@@ -1,4 +1,4 @@
-package br.ufpe.cin.if710.podcast.domain;
+package br.ufpe.cin.if710.podcast.util;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -94,7 +94,7 @@ public class XmlFeedParser {
             }
         }
 
-        return new Podcast(title, link, pubDate, description, downloadLink);
+        return new Podcast(title, description, pubDate, link, downloadLink);
     }
 
     // Processa tags do tipo <enclosure> para obter dados do episodio

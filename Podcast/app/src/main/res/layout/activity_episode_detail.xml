@@ -4,6 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="br.ufpe.cin.if710.podcast.ui.EpisodeDetailActivity">
+    tools:context="br.ufpe.cin.if710.podcast.podcastdetail.PodcastDetailActivity">
 
 </android.support.constraint.ConstraintLayout>

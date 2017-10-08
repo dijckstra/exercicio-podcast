@@ -1,11 +1,11 @@
-package br.ufpe.cin.if710.podcast.ui;
+package br.ufpe.cin.if710.podcast.podcastdetail;
 
 import android.app.Activity;
 import android.os.Bundle;
 
 import br.ufpe.cin.if710.podcast.R;
 
-public class EpisodeDetailActivity extends Activity {
+public class PodcastDetailActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

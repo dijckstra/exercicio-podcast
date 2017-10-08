@@ -11,7 +11,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.MainActivity">
+        <activity android:name=".podcasts.PodcastsActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -21,12 +21,12 @@
         <activity android:name=".ui.SettingsActivity" />
 
         <provider
-            android:name=".db.PodcastProvider"
-            android:authorities="br.ufpe.cin.if710.podcast.feed"
+            android:name=".data.source.PodcastProvider"
+            android:authorities="${packageName}"
             android:enabled="true"
             android:exported="true" />
 
-        <activity android:name=".ui.EpisodeDetailActivity"></activity>
+        <activity android:name=".podcastdetail.PodcastDetailActivity" />
     </application>
 
 </manifest>
