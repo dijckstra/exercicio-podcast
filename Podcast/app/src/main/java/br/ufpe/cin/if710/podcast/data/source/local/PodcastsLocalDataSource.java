@@ -28,8 +28,8 @@ public class PodcastsLocalDataSource implements PodcastsDataSource {
         // since the CursorLoader is loading the data this is not implemented
     }
 
-    public void savePodcast(Podcast task) {
-        ContentValues values = PodcastValues.from(task);
+    public void savePodcast(Podcast podcast) {
+        ContentValues values = PodcastValues.from(podcast);
         contentResolver.insert(PodcastPersistenceContract.PodcastEntry.buildPodcastsUri(), values);
     }
 

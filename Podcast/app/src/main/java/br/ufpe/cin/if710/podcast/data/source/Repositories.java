@@ -9,7 +9,7 @@ import br.ufpe.cin.if710.podcast.data.source.remote.PodcastsRemoteDataSource;
  * Enables injection of implementations for PodcastsDataSource.
  */
 public class Repositories {
-    public static PodcastsRepository provideTasksRepository(Context context) {
+    public static PodcastsRepository providePodcastsRepository(Context context) {
         return PodcastsRepository.getInstance(provideLocalDataSource(context), provideRemoteDataSource());
     }
 

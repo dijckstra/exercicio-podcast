@@ -18,7 +18,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.SettingsActivity" />
+
+        <activity android:name=".settings.SettingsActivity" />
+
+        <activity android:name=".podcastdetail.PodcastDetailActivity" />
 
         <provider
             android:name=".data.source.PodcastProvider"
@@ -26,7 +29,6 @@
             android:enabled="true"
             android:exported="true" />
 
-        <activity android:name=".podcastdetail.PodcastDetailActivity" />
     </application>
 
 </manifest>

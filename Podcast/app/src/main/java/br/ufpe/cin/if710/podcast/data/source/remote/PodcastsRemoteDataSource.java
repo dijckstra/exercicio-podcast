@@ -32,13 +32,12 @@ public class PodcastsRemoteDataSource implements PodcastsDataSource {
 
     @Override
     public void getPodcasts(final GetPodcastsCallback callback) {
-        List<Podcast> itemList = new ArrayList<>();
+        List<Podcast> itemList = null;
 
         try {
             itemList = XmlFeedParser.parse(getRssFeed(RSS_FEED));
         } catch (IOException | XmlPullParserException e) {
             e.printStackTrace();
-            callback.onDataNotAvailable();
         }
 
         callback.onPodcastsLoaded(itemList);

@@ -1,9 +1,9 @@
 package br.ufpe.cin.if710.podcast.podcasts;
 
-import android.app.LoaderManager;
-import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.util.Log;
 
 import java.util.List;
@@ -14,8 +14,7 @@ import br.ufpe.cin.if710.podcast.data.source.PodcastsDataSource;
 import br.ufpe.cin.if710.podcast.data.source.PodcastsRepository;
 
 public class PodcastsPresenter implements PodcastsContract.Presenter,
-        PodcastsRepository.LoadDataCallback, LoaderManager.LoaderCallbacks<Cursor>,
-        PodcastsDataSource.GetPodcastsCallback {
+        LoaderManager.LoaderCallbacks<Cursor>, PodcastsDataSource.GetPodcastsCallback {
 
     public static final int PODCASTS_LOADER = 1;
     private static final String TAG = "PodcastsPresenter";
@@ -36,28 +35,6 @@ public class PodcastsPresenter implements PodcastsContract.Presenter,
         this.podcastsView.setPresenter(this);
     }
 
-    // LoaderManager callbacks
-    @Override
-    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-        return loaderProvider.createPodcastsLoader();
-    }
-
-    @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        if (data != null) {
-            if (data.moveToLast()) {
-                onDataLoaded(data);
-            }
-        } else {
-            onDataNotAvailable();
-        }
-    }
-
-    @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
-        onDataReset();
-    }
-
     // Presenter contract methods
     @Override
     public void start() {
@@ -70,12 +47,20 @@ public class PodcastsPresenter implements PodcastsContract.Presenter,
         podcastsRepository.getPodcasts(this);
     }
 
+    @Override
+    public void openPodcastDetails(Podcast requestedPodcast) {
+        podcastsView.showPodcastDetailsUi(requestedPodcast);
+    }
+
     // Data source callbacks
     @Override
     public void onPodcastsLoaded(List<Podcast> podcasts) {
         // Since the CursorLoader will load the data,
         // the data from this callback can be ignored.
-        Log.d(TAG, "onPodcastsLoaded");
+        if (podcasts == null) {
+            podcastsView.showToast("Could not fetch data from network");
+        }
+
         if (loaderManager.getLoader(PODCASTS_LOADER) == null) {
             loaderManager.initLoader(PODCASTS_LOADER, null, this);
         } else {
@@ -83,19 +68,25 @@ public class PodcastsPresenter implements PodcastsContract.Presenter,
         }
     }
 
+    // LoaderManager callbacks
     @Override
-    public void onDataNotAvailable() {
-        // podcastsView.showLoadingPodcastsError();
-    }
-
-    // Load data callbacks
-    @Override
-    public void onDataLoaded(Cursor data) {
-        podcastsView.showPodcasts(data);
+    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+        return loaderProvider.createPodcastsLoader();
     }
 
     @Override
-    public void onDataReset() {
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        if (data != null) {
+            if (data.moveToLast()) {
+                podcastsView.showPodcasts(data);
+            } else {
+                podcastsView.showToast("No data on local storage");
+            }
+        }
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
         podcastsView.showPodcasts(null);
     }
 }

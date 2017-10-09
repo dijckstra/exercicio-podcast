@@ -37,7 +37,7 @@ public class PodcastProvider extends ContentProvider {
     }
 
     @Override
-    public String getType(Uri uri) {
+    public String getType(@NonNull Uri uri) {
         final int match = uriMatcher.match(uri);
         switch (match) {
             case PODCAST:
@@ -50,7 +50,7 @@ public class PodcastProvider extends ContentProvider {
     }
 
     @Override
-    public Cursor query(Uri uri, String[] projection, String selection,
+    public Cursor query(@NonNull Uri uri, String[] projection, String selection,
                         String[] selectionArgs, String sortOrder) {
         Cursor retCursor;
 
@@ -71,7 +71,7 @@ public class PodcastProvider extends ContentProvider {
                 retCursor = databaseHelper.getReadableDatabase().query(
                         PodcastPersistenceContract.PodcastEntry.TABLE_NAME,
                         projection,
-                        PodcastPersistenceContract.PodcastEntry._ID + " = ?",
+                        PodcastPersistenceContract.PodcastEntry.COLUMN_NAME_ENTRY_ID + " = ?",
                         where,
                         null,
                         null,
@@ -113,7 +113,7 @@ public class PodcastProvider extends ContentProvider {
     }
 
     @Override
-    public int update(Uri uri, ContentValues values, String selection,
+    public int update(@NonNull Uri uri, ContentValues values, String selection,
                       String[] selectionArgs) {
         SQLiteDatabase database = databaseHelper.getWritableDatabase();
         int rowsUpdated;
@@ -139,7 +139,7 @@ public class PodcastProvider extends ContentProvider {
     }
 
     @Override
-    public int delete(Uri uri, String selection, String[] selectionArgs) {
+    public int delete(@NonNull Uri uri, String selection, String[] selectionArgs) {
         final SQLiteDatabase database = databaseHelper.getWritableDatabase();
         int rowsDeleted;
 

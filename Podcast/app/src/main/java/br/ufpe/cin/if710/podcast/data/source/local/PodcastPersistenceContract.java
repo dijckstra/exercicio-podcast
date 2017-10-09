@@ -20,6 +20,7 @@ public class PodcastPersistenceContract {
     private PodcastPersistenceContract() {}
 
     public static class PodcastEntry implements BaseColumns {
+        public static final String COLUMN_NAME_ENTRY_ID = "entry_id";
         public static final String TABLE_NAME = "episodes";
         public static final String COLUMN_NAME_TITLE = "title";
         public static final String COLUMN_NAME_DESCRIPTION = "description";
@@ -31,21 +32,26 @@ public class PodcastPersistenceContract {
         public static final Uri CONTENT_PODCAST_URI = BASE_CONTENT_URI.buildUpon().appendPath(TABLE_NAME).build();
 
         public static String[] PODCAST_COLUMNS = new String[] {
-                PodcastPersistenceContract.PodcastEntry._ID,
-                PodcastPersistenceContract.PodcastEntry.COLUMN_NAME_TITLE,
-                PodcastPersistenceContract.PodcastEntry.COLUMN_NAME_DESCRIPTION,
-                PodcastPersistenceContract.PodcastEntry.COLUMN_NAME_PUB_DATE,
-                PodcastPersistenceContract.PodcastEntry.COLUMN_NAME_LINK,
-                PodcastPersistenceContract.PodcastEntry.COLUMN_NAME_DOWNLOAD_LINK,
-                PodcastPersistenceContract.PodcastEntry.COLUMN_NAME_FILE_URI
+                _ID,
+                COLUMN_NAME_ENTRY_ID,
+                COLUMN_NAME_TITLE,
+                COLUMN_NAME_DESCRIPTION,
+                COLUMN_NAME_PUB_DATE,
+                COLUMN_NAME_LINK,
+                COLUMN_NAME_DOWNLOAD_LINK,
+                COLUMN_NAME_FILE_URI
         };
-
-        public static Uri buildPodcastsUriWith(long id) {
-            return ContentUris.withAppendedId(CONTENT_PODCAST_URI, id);
-        }
 
         public static Uri buildPodcastsUri() {
             return CONTENT_PODCAST_URI.buildUpon().build();
+        }
+
+        public static Uri buildPodcastsUriWith(int id) {
+            return CONTENT_PODCAST_URI.buildUpon().appendPath(String.valueOf(id)).build();
+        }
+
+        public static Uri buildPodcastsUriWith(long id) {
+            return ContentUris.withAppendedId(CONTENT_PODCAST_URI, id);
         }
     }
 }

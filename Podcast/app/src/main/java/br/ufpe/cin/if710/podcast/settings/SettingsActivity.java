@@ -1,4 +1,4 @@
-package br.ufpe.cin.if710.podcast.ui;
+package br.ufpe.cin.if710.podcast.settings;
 
 import android.app.Activity;
 import android.content.SharedPreferences;

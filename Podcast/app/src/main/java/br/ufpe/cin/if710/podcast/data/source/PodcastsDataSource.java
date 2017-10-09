@@ -8,8 +8,6 @@ public interface PodcastsDataSource {
 
     interface GetPodcastsCallback {
         void onPodcastsLoaded(List<Podcast> podcasts);
-
-        void onDataNotAvailable();
     }
 
     void getPodcasts(GetPodcastsCallback callback);
@@ -17,5 +15,4 @@ public interface PodcastsDataSource {
     void savePodcast(Podcast podcast);
 
     void deleteAllPodcasts();
-
 }

@@ -13,6 +13,7 @@ public class PodcastDatabaseHelper extends SQLiteOpenHelper {
     private final static String SQL_CREATE_ENTRIES =
             "CREATE TABLE " + PodcastPersistenceContract.PodcastEntry.TABLE_NAME + " (" +
                     PodcastPersistenceContract.PodcastEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    PodcastPersistenceContract.PodcastEntry.COLUMN_NAME_ENTRY_ID + " INTEGER NOT NULL, " +
                     PodcastPersistenceContract.PodcastEntry.COLUMN_NAME_TITLE + " TEXT NOT NULL, " +
                     PodcastPersistenceContract.PodcastEntry.COLUMN_NAME_DESCRIPTION + " TEXT NOT NULL, " +
                     PodcastPersistenceContract.PodcastEntry.COLUMN_NAME_PUB_DATE + " TEXT NOT NULL, " +

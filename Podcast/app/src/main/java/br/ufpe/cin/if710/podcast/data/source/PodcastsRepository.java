@@ -1,10 +1,7 @@
 package br.ufpe.cin.if710.podcast.data.source;
 
-import android.database.Cursor;
 import android.os.AsyncTask;
-import android.util.Log;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import br.ufpe.cin.if710.podcast.data.Podcast;
@@ -39,27 +36,25 @@ public class PodcastsRepository implements PodcastsDataSource {
 
             @Override
             protected List<Podcast> doInBackground(Void... params) {
+                // First, attempt to get data from network
                 podcastsRemoteDataSource.getPodcasts(new GetPodcastsCallback() {
                     @Override
                     public void onPodcastsLoaded(List<Podcast> result) {
-                        refreshLocalDataSource(result);
                         podcasts = result;
                     }
-
-                    @Override
-                    public void onDataNotAvailable() {
-                        callback.onDataNotAvailable();
-                    }
                 });
+
+                // If the retrieval was successful, update the local data
+                if (podcasts != null) {
+                    refreshLocalDataSource(podcasts);
+                }
 
                 return podcasts;
             }
 
             @Override
             protected void onPostExecute(List<Podcast> podcasts) {
-                if (podcasts != null && !podcasts.isEmpty()) {
-                    callback.onPodcastsLoaded(podcasts);
-                }
+                callback.onPodcastsLoaded(podcasts);
             }
         }.execute();
     }
@@ -80,13 +75,5 @@ public class PodcastsRepository implements PodcastsDataSource {
         for (Podcast podcast : podcasts) {
             podcastsLocalDataSource.savePodcast(podcast);
         }
-    }
-
-    public interface LoadDataCallback {
-        void onDataLoaded(Cursor data);
-
-        void onDataNotAvailable();
-
-        void onDataReset();
     }
 }

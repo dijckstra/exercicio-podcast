@@ -2,7 +2,7 @@
     android:id="@+id/userPreferenceFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    class="br.ufpe.cin.if710.podcast.ui.SettingsActivity$FeedPreferenceFragment"
+    class="br.ufpe.cin.if710.podcast.settings.SettingsActivity$FeedPreferenceFragment"
     android:orientation="vertical" >
 
 </fragment>
