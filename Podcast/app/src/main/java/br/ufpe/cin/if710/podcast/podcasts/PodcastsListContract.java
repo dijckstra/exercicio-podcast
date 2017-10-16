@@ -2,11 +2,10 @@ package br.ufpe.cin.if710.podcast.podcasts;
 
 import android.database.Cursor;
 
-import br.ufpe.cin.if710.podcast.BasePresenter;
 import br.ufpe.cin.if710.podcast.BaseView;
 import br.ufpe.cin.if710.podcast.data.Podcast;
 
-public class PodcastsContract {
+public class PodcastsListContract {
 
     interface View extends BaseView<Presenter> {
         void showPodcasts(Cursor data);
@@ -16,11 +15,23 @@ public class PodcastsContract {
         void showPodcastDetailsUi(Podcast requestedPodcast);
 
         void showSettingsUi();
+
+        void playMedia(Podcast podcast);
+
+        void pauseMedia();
     }
 
-    interface Presenter extends BasePresenter {
+    public interface Presenter {
+        void initLoader();
+
         void loadPodcasts();
 
         void openPodcastDetails(Podcast requestedPodcast);
+
+        void downloadPodcast(Podcast podcast);
+
+        void playPodcast(Podcast podcast);
+
+        void pausePodcast(Podcast podcast);
     }
 }

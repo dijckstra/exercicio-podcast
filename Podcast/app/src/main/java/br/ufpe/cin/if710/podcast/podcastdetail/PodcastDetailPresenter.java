@@ -13,14 +13,14 @@ public class PodcastDetailPresenter implements PodcastDetailContract.Presenter,
 
     private static final int PODCAST_LOADER = 2;
 
-    private int podcastId;
+    private long podcastId;
     private LoaderProvider loaderProvider;
     private LoaderManager loaderManager;
     private PodcastDetailContract.View podcastDetailView;
 
     private Podcast podcast;
 
-    public PodcastDetailPresenter(int podcastId,
+    public PodcastDetailPresenter(long podcastId,
                                   LoaderProvider loaderProvider,
                                   LoaderManager loaderManager,
                                   PodcastDetailContract.View podcastDetailView) {
@@ -33,7 +33,7 @@ public class PodcastDetailPresenter implements PodcastDetailContract.Presenter,
 
     // Presenter contract methods
     @Override
-    public void start() {
+    public void loadPodcast() {
         openPodcast();
     }
 

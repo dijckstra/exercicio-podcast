@@ -6,4 +6,8 @@ public interface PodcastItemListener {
     void onPodcastClick(Podcast clickedPodcast);
 
     void onDownloadPodcastClick(Podcast podcast);
+
+    void onPlayPodcastClick(Podcast podcast);
+
+    void onPausePodcastClick(Podcast podcast);
 }

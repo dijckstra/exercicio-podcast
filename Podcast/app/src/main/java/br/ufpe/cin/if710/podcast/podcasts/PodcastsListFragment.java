@@ -1,8 +1,12 @@
 package br.ufpe.cin.if710.podcast.podcasts;
 
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -18,14 +22,36 @@ import br.ufpe.cin.if710.podcast.data.Podcast;
 import br.ufpe.cin.if710.podcast.podcastdetail.PodcastDetailActivity;
 import br.ufpe.cin.if710.podcast.podcasts.adapter.PodcastsCursorAdapter;
 import br.ufpe.cin.if710.podcast.podcasts.listener.PodcastItemListener;
+import br.ufpe.cin.if710.podcast.services.MediaPlaybackService;
 import br.ufpe.cin.if710.podcast.settings.SettingsActivity;
 
-public class PodcastsFragment extends Fragment implements PodcastsContract.View {
+import static br.ufpe.cin.if710.podcast.services.MediaPlaybackService.ACTION_PAUSE_MEDIA;
 
-    private static final String TAG = "PodcastsFragment";
+public class PodcastsListFragment extends Fragment implements PodcastsListContract.View {
 
-    private PodcastsContract.Presenter presenter;
+    private static final String TAG = "PodcastsListFragment";
+
+    private PodcastsListContract.Presenter presenter;
     private PodcastsCursorAdapter listAdapter;
+    private ListView listView;
+
+//    private MediaPlaybackService playerService;
+    private boolean serviceBound;
+
+    private ServiceConnection serviceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+
+//            MediaPlaybackService.LocalBinder binder = (MediaPlaybackService.LocalBinder) service;
+//            playerService = binder.getService();
+            serviceBound = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            serviceBound = false;
+        }
+    };
 
     // Listener for clicks on podcasts in the ListView.
     private PodcastItemListener listener = new PodcastItemListener() {
@@ -36,7 +62,17 @@ public class PodcastsFragment extends Fragment implements PodcastsContract.View 
 
         @Override
         public void onDownloadPodcastClick(Podcast podcast) {
-            // presenter.downloadPodcast(podcast);
+            presenter.downloadPodcast(podcast);
+        }
+
+        @Override
+        public void onPlayPodcastClick(Podcast podcast) {
+            presenter.playPodcast(podcast);
+        }
+
+        @Override
+        public void onPausePodcastClick(Podcast podcast) {
+            presenter.pausePodcast(podcast);
         }
     };
 
@@ -48,7 +84,7 @@ public class PodcastsFragment extends Fragment implements PodcastsContract.View 
 
         // Set up podcasts view
         listAdapter = new PodcastsCursorAdapter(getActivity(), listener);
-        ListView listView = root.findViewById(R.id.podcasts_list);
+        listView = (ListView) root.findViewById(R.id.podcasts_list);
         listView.setAdapter(listAdapter);
 
         return root;
@@ -74,12 +110,25 @@ public class PodcastsFragment extends Fragment implements PodcastsContract.View 
     @Override
     public void onStart() {
         super.onStart();
-        presenter.start();
+        presenter.initLoader();
+
+        presenter.loadPodcasts();
+    }
+
+    @Override
+    public void onDestroy() {
+        if (serviceBound) {
+            getContext().unbindService(serviceConnection);
+            //service is active
+//            playerService.stopSelf();
+        }
+
+        super.onDestroy();
     }
 
     // View contract methods
     @Override
-    public void setPresenter(PodcastsContract.Presenter presenter) {
+    public void setPresenter(PodcastsListContract.Presenter presenter) {
         this.presenter = presenter;
     }
 
@@ -105,6 +154,23 @@ public class PodcastsFragment extends Fragment implements PodcastsContract.View 
     public void showSettingsUi() {
         Intent intent = new Intent(getContext(), SettingsActivity.class);
         startActivity(intent);
+    }
+
+    @Override
+    public void playMedia(Podcast podcast) {
+        if (!serviceBound) {
+            Intent playerIntent = new Intent(getContext(), MediaPlaybackService.class);
+            playerIntent.putExtra("media", podcast.getFileUri());
+            playerIntent.putExtra("podcastId", podcast.getId());
+            getContext().startService(playerIntent);
+            getContext().bindService(playerIntent, serviceConnection, Context.BIND_AUTO_CREATE);
+        }
+    }
+
+    @Override
+    public void pauseMedia() {
+        Intent pauseIntent = new Intent(ACTION_PAUSE_MEDIA);
+        getContext().sendBroadcast(pauseIntent);
     }
 
 }

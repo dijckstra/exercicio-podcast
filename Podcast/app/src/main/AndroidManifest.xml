@@ -3,6 +3,7 @@
     package="br.ufpe.cin.if710.podcast">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -28,7 +29,14 @@
             android:authorities="${packageName}"
             android:enabled="true"
             android:exported="true" />
+        
+        <receiver android:name=".receivers.DownloadCompleteReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.DOWNLOAD_COMPLETE"/>
+            </intent-filter>
+        </receiver>
 
+        <service android:name=".services.MediaPlaybackService" />
     </application>
 
 </manifest>

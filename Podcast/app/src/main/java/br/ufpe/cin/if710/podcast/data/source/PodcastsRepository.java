@@ -65,13 +65,21 @@ public class PodcastsRepository implements PodcastsDataSource {
     }
 
     @Override
-    public void deleteAllPodcasts() {
-        podcastsLocalDataSource.deleteAllPodcasts();
+    public void setDownloaded(long podcastId, String uri) {
+        podcastsLocalDataSource.setDownloaded(podcastId, uri);
+    }
+
+    @Override
+    public void setPodcastState(long podcastId, int state) {
+        podcastsLocalDataSource.setPodcastState(podcastId, state);
+    }
+
+    @Override
+    public void removePodcastLocalUri(int podcastId) {
+        podcastsLocalDataSource.removePodcastLocalUri(podcastId);
     }
 
     private void refreshLocalDataSource(List<Podcast> podcasts) {
-        podcastsLocalDataSource.deleteAllPodcasts();
-
         for (Podcast podcast : podcasts) {
             podcastsLocalDataSource.savePodcast(podcast);
         }

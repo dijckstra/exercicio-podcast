@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 
 import br.ufpe.cin.if710.podcast.data.Podcast;
@@ -49,7 +48,17 @@ public class PodcastsRemoteDataSource implements PodcastsDataSource {
     }
 
     @Override
-    public void deleteAllPodcasts() {
+    public void setDownloaded(long podcastId, String uri) {
+        // since this is an RSS feed we are not manipulating data
+    }
+
+    @Override
+    public void setPodcastState(long id, int state) {
+        // since this is an RSS feed we are not manipulating data
+    }
+
+    @Override
+    public void removePodcastLocalUri(int podcastId) {
         // since this is an RSS feed we are not manipulating data
     }
 

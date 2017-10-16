@@ -28,13 +28,57 @@ public class PodcastsLocalDataSource implements PodcastsDataSource {
         // since the CursorLoader is loading the data this is not implemented
     }
 
+    @Override
     public void savePodcast(Podcast podcast) {
         ContentValues values = PodcastValues.from(podcast);
         contentResolver.insert(PodcastPersistenceContract.PodcastEntry.buildPodcastsUri(), values);
     }
 
     @Override
-    public void deleteAllPodcasts() {
-        contentResolver.delete(PodcastPersistenceContract.PodcastEntry.buildPodcastsUri(), null, null);
+    public void setDownloaded(long podcastId, String uri) {
+        ContentValues values = new ContentValues();
+        values.put(PodcastPersistenceContract.PodcastEntry.COLUMN_NAME_FILE_URI, uri);
+
+        String selection = PodcastPersistenceContract.PodcastEntry._ID + " LIKE ?";
+        String[] selectionArgs = { String.valueOf(podcastId) };
+
+        contentResolver.update(
+                PodcastPersistenceContract.PodcastEntry.buildPodcastsUri(),
+                values,
+                selection,
+                selectionArgs
+        );
+    }
+
+    @Override
+    public void setPodcastState(long podcastId, int state) {
+        ContentValues values = new ContentValues();
+        values.put(PodcastPersistenceContract.PodcastEntry.COLUMN_NAME_STATE, state);
+
+        String selection = PodcastPersistenceContract.PodcastEntry._ID + " LIKE ?";
+        String[] selectionArgs = { String.valueOf(podcastId) };
+
+        contentResolver.update(
+                PodcastPersistenceContract.PodcastEntry.buildPodcastsUri(),
+                values,
+                selection,
+                selectionArgs
+        );
+    }
+
+    @Override
+    public void removePodcastLocalUri(int podcastId) {
+        ContentValues values = new ContentValues();
+        values.put(PodcastPersistenceContract.PodcastEntry.COLUMN_NAME_FILE_URI, "");
+
+        String selection = PodcastPersistenceContract.PodcastEntry._ID + " LIKE ?";
+        String[] selectionArgs = { String.valueOf(podcastId) };
+
+        contentResolver.update(
+                PodcastPersistenceContract.PodcastEntry.buildPodcastsUri(),
+                values,
+                selection,
+                selectionArgs
+        );
     }
 }

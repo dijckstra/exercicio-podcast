@@ -8,11 +8,14 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import br.ufpe.cin.if710.podcast.data.source.local.PodcastDatabaseHelper;
 import br.ufpe.cin.if710.podcast.data.source.local.PodcastPersistenceContract;
 
 public class PodcastProvider extends ContentProvider {
+
+    private static final String TAG = "PodcastProvider";
 
     private static final int PODCAST = 100;
     private static final int PODCAST_ITEM = 101;
@@ -71,7 +74,7 @@ public class PodcastProvider extends ContentProvider {
                 retCursor = databaseHelper.getReadableDatabase().query(
                         PodcastPersistenceContract.PodcastEntry.TABLE_NAME,
                         projection,
-                        PodcastPersistenceContract.PodcastEntry.COLUMN_NAME_ENTRY_ID + " = ?",
+                        PodcastPersistenceContract.PodcastEntry._ID + " = ?",
                         where,
                         null,
                         null,
@@ -89,20 +92,40 @@ public class PodcastProvider extends ContentProvider {
     @Override
     public Uri insert(@NonNull Uri uri, ContentValues values) {
         SQLiteDatabase database = databaseHelper.getWritableDatabase();
-        Uri returnUri;
+        Uri returnUri = null;
 
         switch (uriMatcher.match(uri)) {
             case PODCAST:
-                long _id = database.insert(
+                // Check if the item to be inserted exists.
+                // Since the podcast information from the server doesn't
+                // have a unique identifier, the selection is done
+                // by passing the publication date
+                Cursor exists = database.query(
                         PodcastPersistenceContract.PodcastEntry.TABLE_NAME,
+                        new String[] { PodcastPersistenceContract.PodcastEntry.COLUMN_NAME_TITLE },
+                        PodcastPersistenceContract.PodcastEntry.COLUMN_NAME_PUB_DATE + " = ?",
+                        new String[] { values.getAsString(PodcastPersistenceContract.PodcastEntry.COLUMN_NAME_PUB_DATE) },
                         null,
-                        values
+                        null,
+                        null
                 );
-                if (_id > 0) {
-                    returnUri = PodcastPersistenceContract.PodcastEntry.buildPodcastsUriWith(_id);
-                } else {
-                    throw new SQLException("Failed to insert row into " + uri);
+
+                // If it doesn't exist, insert it.
+                if (!exists.moveToLast()) {
+                    long _id = database.insert(
+                            PodcastPersistenceContract.PodcastEntry.TABLE_NAME,
+                            null,
+                            values
+                    );
+
+                    if (_id > 0) {
+                        returnUri = PodcastPersistenceContract.PodcastEntry.buildPodcastsUriWith(_id);
+                    } else {
+                        throw new SQLException("Failed to insert row into " + uri);
+                    }
                 }
+
+                exists.close();
                 break;
             default:
                 throw new UnsupportedOperationException("Unknown URI: " + uri);
@@ -138,6 +161,7 @@ public class PodcastProvider extends ContentProvider {
         return rowsUpdated;
     }
 
+    // no-op
     @Override
     public int delete(@NonNull Uri uri, String selection, String[] selectionArgs) {
         final SQLiteDatabase database = databaseHelper.getWritableDatabase();

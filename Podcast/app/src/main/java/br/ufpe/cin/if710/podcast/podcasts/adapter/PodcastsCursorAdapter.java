@@ -2,16 +2,21 @@ package br.ufpe.cin.if710.podcast.podcasts.adapter;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.CursorAdapter;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import br.ufpe.cin.if710.podcast.R;
 import br.ufpe.cin.if710.podcast.data.Podcast;
 import br.ufpe.cin.if710.podcast.podcasts.listener.PodcastItemListener;
+
+import static br.ufpe.cin.if710.podcast.data.Podcast.STATE_DOWNLOADED;
+import static br.ufpe.cin.if710.podcast.data.Podcast.STATE_NOT_DOWNLOADED;
+import static br.ufpe.cin.if710.podcast.data.Podcast.STATE_PLAYING;
 
 public class PodcastsCursorAdapter extends CursorAdapter {
     private PodcastItemListener itemListener;
@@ -32,18 +37,48 @@ public class PodcastsCursorAdapter extends CursorAdapter {
     }
 
     @Override
-    public void bindView(View view, Context context, Cursor cursor) {
-        ViewHolder viewHolder = (ViewHolder) view.getTag();
+    public void bindView(View view, final Context context, Cursor cursor) {
+        final ViewHolder viewHolder = (ViewHolder) view.getTag();
 
         final Podcast podcast = Podcast.from(cursor);
         viewHolder.titleTV.setText(podcast.getTitle());
         viewHolder.dateTV.setText(podcast.getPubDate());
-        viewHolder.downloadB.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                itemListener.onDownloadPodcastClick(podcast);
-            }
-        });
+
+        final ImageButton button = viewHolder.downloadB;
+        button.setColorFilter(ContextCompat.getColor(context, android.R.color.black));
+
+        switch (podcast.getState()) {
+            case STATE_NOT_DOWNLOADED:
+                button.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_download));
+                button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        itemListener.onDownloadPodcastClick(podcast);
+                    }
+                });
+                break;
+
+            case STATE_DOWNLOADED:
+            button.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_play));
+            button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        itemListener.onPlayPodcastClick(podcast);
+                    }
+                });
+            break;
+
+            case STATE_PLAYING:
+            button.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_pause));
+            button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        itemListener.onPausePodcastClick(podcast);
+                    }
+                });
+            break;
+        }
+
         viewHolder.rowView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -56,13 +91,13 @@ public class PodcastsCursorAdapter extends CursorAdapter {
         final View rowView;
         final TextView titleTV;
         final TextView dateTV;
-        final Button downloadB;
+        final ImageButton downloadB;
 
         ViewHolder(View view) {
             rowView = view;
-            titleTV = view.findViewById(R.id.item_title);
-            dateTV = view.findViewById(R.id.item_date);
-            downloadB = view.findViewById(R.id.item_action);
+            titleTV = (TextView) view.findViewById(R.id.item_title);
+            dateTV = (TextView) view.findViewById(R.id.item_date);
+            downloadB = (ImageButton) view.findViewById(R.id.item_action);
         }
     }
 }

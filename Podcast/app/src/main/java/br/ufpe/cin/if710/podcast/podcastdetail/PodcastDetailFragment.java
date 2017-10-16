@@ -28,10 +28,10 @@ public class PodcastDetailFragment extends Fragment implements PodcastDetailCont
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_podcast_detail, container, false);
 
-        detailTitle = root.findViewById(R.id.podcast_detail_title);
-        detailDescription = root.findViewById(R.id.podcast_detail_description);
-        detailPubDate = root.findViewById(R.id.podcast_detail_pub_date);
-        detailDownloadLink = root.findViewById(R.id.podcast_detail_link);
+        detailTitle = (TextView) root.findViewById(R.id.podcast_detail_title);
+        detailDescription = (TextView) root.findViewById(R.id.podcast_detail_description);
+        detailPubDate = (TextView) root.findViewById(R.id.podcast_detail_pub_date);
+        detailDownloadLink = (TextView) root.findViewById(R.id.podcast_detail_link);
 
         return root;
     }
@@ -39,7 +39,7 @@ public class PodcastDetailFragment extends Fragment implements PodcastDetailCont
     @Override
     public void onResume() {
         super.onResume();
-        presenter.start();
+        presenter.loadPodcast();
     }
 
     // View contract methods

@@ -1,32 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical" >
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="@dimen/media_item_height">
+
+    <ImageButton
+        android:id="@+id/item_action"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="@dimen/media_item_icon_margin_start"
+        android:src="@drawable/ic_download"
+        android:background="@android:color/transparent"/>
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal" >
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="@dimen/media_item_text_margin_start"
+        android:layout_centerVertical="true"
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/item_title"
-            android:layout_width="wrap_content"
+            tools:text="Ciência e Pseudociência"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="8"
-            android:textSize="18sp" />
-        <Button
-            android:id="@+id/item_action"
-            android:layout_width="wrap_content"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="?android:attr/textColorPrimary"/>
+
+        <TextView
+            android:id="@+id/item_date"
+            tools:text="Sun, 20 Jun 2010 1:40:05 GMT"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:text="@string/action_download" />
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="?android:attr/textColorSecondary"/>
 
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/item_date"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="12sp" />
-
-</LinearLayout>
+</RelativeLayout>

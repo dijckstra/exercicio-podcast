@@ -8,12 +8,12 @@ import br.ufpe.cin.if710.podcast.data.source.local.PodcastPersistenceContract;
 public class PodcastValues {
     public static ContentValues from(Podcast podcast) {
         ContentValues values = new ContentValues();
-        values.put(PodcastPersistenceContract.PodcastEntry.COLUMN_NAME_ENTRY_ID, podcast.getId());
         values.put(PodcastPersistenceContract.PodcastEntry.COLUMN_NAME_TITLE, podcast.getTitle());
         values.put(PodcastPersistenceContract.PodcastEntry.COLUMN_NAME_DESCRIPTION, podcast.getDescription());
         values.put(PodcastPersistenceContract.PodcastEntry.COLUMN_NAME_PUB_DATE, podcast.getPubDate());
         values.put(PodcastPersistenceContract.PodcastEntry.COLUMN_NAME_LINK, podcast.getLink());
         values.put(PodcastPersistenceContract.PodcastEntry.COLUMN_NAME_DOWNLOAD_LINK, podcast.getDownloadLink());
+        values.put(PodcastPersistenceContract.PodcastEntry.COLUMN_NAME_STATE, podcast.getState());
         return values;
     }
 }

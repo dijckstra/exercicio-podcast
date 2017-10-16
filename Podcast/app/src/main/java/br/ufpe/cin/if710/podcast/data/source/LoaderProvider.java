@@ -26,7 +26,7 @@ public class LoaderProvider {
         );
     }
 
-    public Loader<Cursor> createPodcastLoader(int podcastId) {
+    public Loader<Cursor> createPodcastLoader(long podcastId) {
         return new CursorLoader(
                 context,
                 PodcastPersistenceContract.PodcastEntry.buildPodcastsUriWith(podcastId),

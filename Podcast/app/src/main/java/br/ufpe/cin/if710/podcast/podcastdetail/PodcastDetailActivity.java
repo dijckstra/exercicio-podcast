@@ -25,17 +25,17 @@ public class PodcastDetailActivity extends AppCompatActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayShowHomeEnabled(true);
 
-        int podcastId = getIntent().getIntExtra(EXTRA_PODCAST_ID, 0);
+        long podcastId = getIntent().getLongExtra(EXTRA_PODCAST_ID, 0);
 
         PodcastDetailFragment podcastDetailFragment =
-                (PodcastDetailFragment) getSupportFragmentManager().findFragmentById(R.id.content_frame);
+                (PodcastDetailFragment) getSupportFragmentManager().findFragmentById(R.id.content_frame_list);
         if (podcastDetailFragment == null) {
             // Create the fragment
             podcastDetailFragment = new PodcastDetailFragment();
 
             // Add fragment to activity
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            transaction.add(R.id.content_frame, podcastDetailFragment);
+            transaction.add(R.id.content_frame_list, podcastDetailFragment);
             transaction.commit();
         }
 
