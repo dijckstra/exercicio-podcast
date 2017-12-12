@@ -16,9 +16,7 @@ public interface PodcastsDataSource {
 
     void savePodcast(Podcast podcast);
 
-    void setDownloaded(long podcastId, String uri);
+    void setPodcastUri(long podcastId, String uri);
 
-    void setPodcastState(long id, int state);
-
-    void removePodcastLocalUri(int podcastId);
+    void setPodcastState(long podcastId, int state);
 }

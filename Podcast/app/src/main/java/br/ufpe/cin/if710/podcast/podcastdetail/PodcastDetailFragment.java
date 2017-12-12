@@ -14,7 +14,6 @@ import br.ufpe.cin.if710.podcast.data.Podcast;
 public class PodcastDetailFragment extends Fragment implements PodcastDetailContract.View {
 
     private static final String TAG = "PodcastDetailFragment";
-    private static final String ARGUMENT_TASK_ID = "TASK_ID";
 
     private PodcastDetailContract.Presenter presenter;
 

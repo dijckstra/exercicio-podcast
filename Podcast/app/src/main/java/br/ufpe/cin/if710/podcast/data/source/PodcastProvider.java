@@ -1,17 +1,21 @@
 package br.ufpe.cin.if710.podcast.data.source;
 
 import android.content.ContentProvider;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.SQLException;
-import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
-import br.ufpe.cin.if710.podcast.data.source.local.PodcastDatabaseHelper;
+import br.ufpe.cin.if710.podcast.data.source.local.PodcastDao;
 import br.ufpe.cin.if710.podcast.data.source.local.PodcastPersistenceContract;
+import br.ufpe.cin.if710.podcast.data.source.local.PodcastsDatabase;
+
+import static br.ufpe.cin.if710.podcast.data.source.local.PodcastPersistenceContract.PodcastEntry.COLUMN_NAME_FILE_URI;
+import static br.ufpe.cin.if710.podcast.data.source.local.PodcastPersistenceContract.PodcastEntry.COLUMN_NAME_PUB_DATE;
+import static br.ufpe.cin.if710.podcast.data.source.local.PodcastPersistenceContract.PodcastEntry.COLUMN_NAME_STATE;
 
 public class PodcastProvider extends ContentProvider {
 
@@ -21,7 +25,7 @@ public class PodcastProvider extends ContentProvider {
     private static final int PODCAST_ITEM = 101;
     private static final UriMatcher uriMatcher = buildUriMatcher();
 
-    private PodcastDatabaseHelper databaseHelper;
+    private PodcastDao podcastDao;
 
     private static UriMatcher buildUriMatcher() {
         final UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
@@ -35,7 +39,7 @@ public class PodcastProvider extends ContentProvider {
 
     @Override
     public boolean onCreate() {
-        databaseHelper = new PodcastDatabaseHelper(getContext());
+        podcastDao = PodcastsDatabase.getInstance(getContext()).podcastDao();
         return true;
     }
 
@@ -59,27 +63,10 @@ public class PodcastProvider extends ContentProvider {
 
         switch (uriMatcher.match(uri)) {
             case PODCAST:
-                retCursor = databaseHelper.getReadableDatabase().query(
-                        PodcastPersistenceContract.PodcastEntry.TABLE_NAME,
-                        projection,
-                        selection,
-                        selectionArgs,
-                        null,
-                        null,
-                        sortOrder
-                );
+                retCursor = podcastDao.getPodcasts();
                 break;
             case PODCAST_ITEM:
-                String[] where = {uri.getLastPathSegment()};
-                retCursor = databaseHelper.getReadableDatabase().query(
-                        PodcastPersistenceContract.PodcastEntry.TABLE_NAME,
-                        projection,
-                        PodcastPersistenceContract.PodcastEntry._ID + " = ?",
-                        where,
-                        null,
-                        null,
-                        sortOrder
-                );
+                retCursor = podcastDao.getPodcast(ContentUris.parseId(uri));
                 break;
             default:
                 throw new UnsupportedOperationException("Unknown URI: " + uri);
@@ -91,7 +78,6 @@ public class PodcastProvider extends ContentProvider {
 
     @Override
     public Uri insert(@NonNull Uri uri, ContentValues values) {
-        SQLiteDatabase database = databaseHelper.getWritableDatabase();
         Uri returnUri = null;
 
         switch (uriMatcher.match(uri)) {
@@ -100,23 +86,11 @@ public class PodcastProvider extends ContentProvider {
                 // Since the podcast information from the server doesn't
                 // have a unique identifier, the selection is done
                 // by passing the publication date
-                Cursor exists = database.query(
-                        PodcastPersistenceContract.PodcastEntry.TABLE_NAME,
-                        new String[] { PodcastPersistenceContract.PodcastEntry.COLUMN_NAME_TITLE },
-                        PodcastPersistenceContract.PodcastEntry.COLUMN_NAME_PUB_DATE + " = ?",
-                        new String[] { values.getAsString(PodcastPersistenceContract.PodcastEntry.COLUMN_NAME_PUB_DATE) },
-                        null,
-                        null,
-                        null
-                );
+                Cursor exists = podcastDao.getPodcast(values.getAsString(COLUMN_NAME_PUB_DATE));
 
                 // If it doesn't exist, insert it.
                 if (!exists.moveToLast()) {
-                    long _id = database.insert(
-                            PodcastPersistenceContract.PodcastEntry.TABLE_NAME,
-                            null,
-                            values
-                    );
+                    long _id = podcastDao.savePodcast(PodcastValues.toPodcast(values));
 
                     if (_id > 0) {
                         returnUri = PodcastPersistenceContract.PodcastEntry.buildPodcastsUriWith(_id);
@@ -138,17 +112,18 @@ public class PodcastProvider extends ContentProvider {
     @Override
     public int update(@NonNull Uri uri, ContentValues values, String selection,
                       String[] selectionArgs) {
-        SQLiteDatabase database = databaseHelper.getWritableDatabase();
-        int rowsUpdated;
+        int rowsUpdated = 0;
 
         switch (uriMatcher.match(uri)) {
             case PODCAST:
-                rowsUpdated = database.update(
-                        PodcastPersistenceContract.PodcastEntry.TABLE_NAME,
-                        values,
-                        selection,
-                        selectionArgs
-                );
+                if (values.containsKey(COLUMN_NAME_FILE_URI)) {
+                    rowsUpdated = podcastDao.setFileUri(Long.parseLong(selectionArgs[0]),
+                            values.getAsString(COLUMN_NAME_FILE_URI));
+                } else if (values.containsKey(COLUMN_NAME_STATE)) {
+                    rowsUpdated = podcastDao.setPodcastState(Long.parseLong(selectionArgs[0]),
+                            values.getAsInteger(COLUMN_NAME_STATE));
+                }
+
                 break;
             default:
                 throw new UnsupportedOperationException("Unknown URI: " + uri);
@@ -161,28 +136,9 @@ public class PodcastProvider extends ContentProvider {
         return rowsUpdated;
     }
 
-    // no-op
     @Override
     public int delete(@NonNull Uri uri, String selection, String[] selectionArgs) {
-        final SQLiteDatabase database = databaseHelper.getWritableDatabase();
-        int rowsDeleted;
-
-        switch (uriMatcher.match(uri)) {
-            case PODCAST:
-                rowsDeleted = database.delete(
-                        PodcastPersistenceContract.PodcastEntry.TABLE_NAME,
-                        selection,
-                        selectionArgs
-                );
-                break;
-            default:
-                throw new UnsupportedOperationException("Unknown URI: " + uri);
-        }
-
-        if (selection == null || rowsDeleted != 0) {
-            getContext().getContentResolver().notifyChange(uri, null);
-        }
-
-        return rowsDeleted;
+        // no-op
+        return 0;
     }
 }

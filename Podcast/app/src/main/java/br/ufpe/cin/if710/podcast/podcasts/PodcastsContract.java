@@ -5,7 +5,7 @@ import android.database.Cursor;
 import br.ufpe.cin.if710.podcast.BaseView;
 import br.ufpe.cin.if710.podcast.data.Podcast;
 
-public class PodcastsListContract {
+public class PodcastsContract {
 
     interface View extends BaseView<Presenter> {
         void showPodcasts(Cursor data);

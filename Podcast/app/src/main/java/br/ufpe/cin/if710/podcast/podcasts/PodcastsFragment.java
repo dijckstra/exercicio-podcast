@@ -25,25 +25,21 @@ import br.ufpe.cin.if710.podcast.podcasts.listener.PodcastItemListener;
 import br.ufpe.cin.if710.podcast.services.MediaPlaybackService;
 import br.ufpe.cin.if710.podcast.settings.SettingsActivity;
 
-import static br.ufpe.cin.if710.podcast.services.MediaPlaybackService.ACTION_PAUSE_MEDIA;
+import static br.ufpe.cin.if710.podcast.services.MediaPlaybackService.ACTION_PLAY_PAUSE_MEDIA;
 
-public class PodcastsListFragment extends Fragment implements PodcastsListContract.View {
+public class PodcastsFragment extends Fragment implements PodcastsContract.View {
 
-    private static final String TAG = "PodcastsListFragment";
+    private static final String TAG = "PodcastsFragment";
 
-    private PodcastsListContract.Presenter presenter;
+    private PodcastsContract.Presenter presenter;
     private PodcastsCursorAdapter listAdapter;
     private ListView listView;
 
-//    private MediaPlaybackService playerService;
     private boolean serviceBound;
 
     private ServiceConnection serviceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-
-//            MediaPlaybackService.LocalBinder binder = (MediaPlaybackService.LocalBinder) service;
-//            playerService = binder.getService();
             serviceBound = true;
         }
 
@@ -119,8 +115,6 @@ public class PodcastsListFragment extends Fragment implements PodcastsListContra
     public void onDestroy() {
         if (serviceBound) {
             getContext().unbindService(serviceConnection);
-            //service is active
-//            playerService.stopSelf();
         }
 
         super.onDestroy();
@@ -128,7 +122,7 @@ public class PodcastsListFragment extends Fragment implements PodcastsListContra
 
     // View contract methods
     @Override
-    public void setPresenter(PodcastsListContract.Presenter presenter) {
+    public void setPresenter(PodcastsContract.Presenter presenter) {
         this.presenter = presenter;
     }
 
@@ -164,12 +158,15 @@ public class PodcastsListFragment extends Fragment implements PodcastsListContra
             playerIntent.putExtra("podcastId", podcast.getId());
             getContext().startService(playerIntent);
             getContext().bindService(playerIntent, serviceConnection, Context.BIND_AUTO_CREATE);
+        } else {
+            Intent resumeIntent = new Intent(ACTION_PLAY_PAUSE_MEDIA);
+            getContext().sendBroadcast(resumeIntent);
         }
     }
 
     @Override
     public void pauseMedia() {
-        Intent pauseIntent = new Intent(ACTION_PAUSE_MEDIA);
+        Intent pauseIntent = new Intent(ACTION_PLAY_PAUSE_MEDIA);
         getContext().sendBroadcast(pauseIntent);
     }
 

@@ -7,9 +7,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
-import android.net.Uri;
 import android.os.Binder;
-import android.os.Environment;
 import android.os.IBinder;
 import android.util.Log;
 
@@ -25,20 +23,20 @@ public class MediaPlaybackService extends Service implements MediaPlayer.OnCompl
         MediaPlayer.OnPreparedListener {
 
     private static final String TAG = "MediaPlaybackService";
-    public static final String ACTION_PAUSE_MEDIA = "br.ufpe.cin.if710.action.PAUSE_MEDIA";
+    public static final String ACTION_PLAY_PAUSE_MEDIA = "br.ufpe.cin.if710.action.PLAY_PAUSE_MEDIA";
 
     // Binder given to clients
     private final IBinder iBinder = new Binder();
     private MediaPlayer mediaPlayer;
 
-    private int podcastId;
+    private long podcastId;
     private String file;
-    //Used to pause/resume MediaPlayer
 
-    private BroadcastReceiver pauseMediaReceiver = new BroadcastReceiver() {
+    //Used to pause/resume MediaPlayer
+    private BroadcastReceiver playPauseMediaReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            pauseMedia();
+            toggleMedia();
         }
     };
 
@@ -52,7 +50,7 @@ public class MediaPlaybackService extends Service implements MediaPlayer.OnCompl
         try {
             //An audio file is passed to the service through putExtra()
             file = intent.getExtras().getString("media");
-            podcastId = intent.getExtras().getInt("podcastId");
+            podcastId = intent.getExtras().getLong("podcastId");
         } catch (NullPointerException e) {
             stopSelf();
         }
@@ -61,14 +59,14 @@ public class MediaPlaybackService extends Service implements MediaPlayer.OnCompl
             initMediaPlayer();
         }
 
-        registerReceiver(pauseMediaReceiver, new IntentFilter(ACTION_PAUSE_MEDIA));
+        registerReceiver(playPauseMediaReceiver, new IntentFilter(ACTION_PLAY_PAUSE_MEDIA));
 
         return super.onStartCommand(intent, flags, startId);
     }
 
     @Override
     public void onDestroy() {
-        unregisterReceiver(pauseMediaReceiver);
+        unregisterReceiver(playPauseMediaReceiver);
 
         Repositories.getInstance(this).setPodcastState(podcastId, STATE_DOWNLOADED);
 
@@ -100,23 +98,24 @@ public class MediaPlaybackService extends Service implements MediaPlayer.OnCompl
         mediaPlayer.prepareAsync();
     }
 
+    private void toggleMedia() {
+        if (!mediaPlayer.isPlaying()) {
+            mediaPlayer.start();
+        } else {
+            mediaPlayer.pause();
+        }
+    }
+
     private void playMedia() {
         if (!mediaPlayer.isPlaying()) {
             mediaPlayer.start();
         }
-        mediaPlayer.seekTo(1800000);
     }
 
     private void stopMedia() {
         if (mediaPlayer == null) return;
         if (mediaPlayer.isPlaying()) {
             mediaPlayer.stop();
-        }
-    }
-
-    private void pauseMedia() {
-        if (mediaPlayer.isPlaying()) {
-            mediaPlayer.pause();
         }
     }
 
@@ -134,7 +133,7 @@ public class MediaPlaybackService extends Service implements MediaPlayer.OnCompl
         if (deleted) {
             Log.d(TAG, "deleted");
             Repositories.getInstance(this).setPodcastState(podcastId, STATE_NOT_DOWNLOADED);
-            Repositories.getInstance(this).removePodcastLocalUri(podcastId);
+            Repositories.getInstance(this).setPodcastUri(podcastId, "");
         }
     }
 

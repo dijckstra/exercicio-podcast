@@ -5,7 +5,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.util.Log;
 
 import br.ufpe.cin.if710.podcast.data.source.Repositories;
 
@@ -35,7 +34,7 @@ public class DownloadCompleteReceiver extends BroadcastReceiver {
                 long id = Long.parseLong(path.substring(path.lastIndexOf('/') + 1, path.indexOf('.')));
 
                 // Update the data sources with the path to the downloaded podcast
-                Repositories.getInstance(context).setDownloaded(id, path);
+                Repositories.getInstance(context).setPodcastUri(id, path);
                 Repositories.getInstance(context).setPodcastState(id, STATE_DOWNLOADED);
             }
         }

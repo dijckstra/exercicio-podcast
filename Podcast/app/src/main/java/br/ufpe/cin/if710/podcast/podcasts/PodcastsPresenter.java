@@ -16,27 +16,27 @@ import br.ufpe.cin.if710.podcast.data.source.LoaderProvider;
 import br.ufpe.cin.if710.podcast.data.source.PodcastsDataSource;
 import br.ufpe.cin.if710.podcast.data.source.PodcastsRepository;
 
-import static br.ufpe.cin.if710.podcast.data.Podcast.STATE_DOWNLOADED;
 import static br.ufpe.cin.if710.podcast.data.Podcast.STATE_PLAYING;
+import static br.ufpe.cin.if710.podcast.data.Podcast.STATE_DOWNLOADED;
 
-public class PodcastsListPresenter implements PodcastsListContract.Presenter,
+public class PodcastsPresenter implements PodcastsContract.Presenter,
         LoaderManager.LoaderCallbacks<Cursor>, PodcastsDataSource.GetPodcastsCallback {
 
     public static final int PODCASTS_LOADER = 1;
-    private static final String TAG = "PodcastsListPresenter";
+    private static final String TAG = "PodcastsPresenter";
 
     private LoaderProvider loaderProvider;
     private LoaderManager loaderManager;
     private PodcastsRepository podcastsRepository;
-    private PodcastsListContract.View podcastsView;
+    private PodcastsContract.View podcastsView;
 
     private DownloadManager downloadManager;
 
-    public PodcastsListPresenter(LoaderProvider loaderProvider,
-                                 LoaderManager loaderManager,
-                                 PodcastsRepository podcastsRepository,
-                                 PodcastsListContract.View podcastsView,
-                                 DownloadManager downloadManager) {
+    public PodcastsPresenter(LoaderProvider loaderProvider,
+                             LoaderManager loaderManager,
+                             PodcastsRepository podcastsRepository,
+                             PodcastsContract.View podcastsView,
+                             DownloadManager downloadManager) {
         this.loaderProvider = loaderProvider;
         this.loaderManager = loaderManager;
         this.podcastsRepository = podcastsRepository;

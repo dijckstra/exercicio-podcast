@@ -30,12 +30,12 @@ public class PodcastsLocalDataSource implements PodcastsDataSource {
 
     @Override
     public void savePodcast(Podcast podcast) {
-        ContentValues values = PodcastValues.from(podcast);
+        ContentValues values = PodcastValues.fromPodcast(podcast);
         contentResolver.insert(PodcastPersistenceContract.PodcastEntry.buildPodcastsUri(), values);
     }
 
     @Override
-    public void setDownloaded(long podcastId, String uri) {
+    public void setPodcastUri(long podcastId, String uri) {
         ContentValues values = new ContentValues();
         values.put(PodcastPersistenceContract.PodcastEntry.COLUMN_NAME_FILE_URI, uri);
 
@@ -54,22 +54,6 @@ public class PodcastsLocalDataSource implements PodcastsDataSource {
     public void setPodcastState(long podcastId, int state) {
         ContentValues values = new ContentValues();
         values.put(PodcastPersistenceContract.PodcastEntry.COLUMN_NAME_STATE, state);
-
-        String selection = PodcastPersistenceContract.PodcastEntry._ID + " LIKE ?";
-        String[] selectionArgs = { String.valueOf(podcastId) };
-
-        contentResolver.update(
-                PodcastPersistenceContract.PodcastEntry.buildPodcastsUri(),
-                values,
-                selection,
-                selectionArgs
-        );
-    }
-
-    @Override
-    public void removePodcastLocalUri(int podcastId) {
-        ContentValues values = new ContentValues();
-        values.put(PodcastPersistenceContract.PodcastEntry.COLUMN_NAME_FILE_URI, "");
 
         String selection = PodcastPersistenceContract.PodcastEntry._ID + " LIKE ?";
         String[] selectionArgs = { String.valueOf(podcastId) };

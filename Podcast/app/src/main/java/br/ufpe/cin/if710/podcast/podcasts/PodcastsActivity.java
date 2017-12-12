@@ -25,11 +25,11 @@ public class PodcastsActivity extends AppCompatActivity {
 
         requestRequiredPermissions(this);
 
-        PodcastsListFragment podcastsFragment =
-                (PodcastsListFragment) getSupportFragmentManager().findFragmentById(R.id.content_frame_list);
+        PodcastsFragment podcastsFragment =
+                (PodcastsFragment) getSupportFragmentManager().findFragmentById(R.id.content_frame_list);
         if (podcastsFragment == null) {
             // Create the fragment
-            podcastsFragment = new PodcastsListFragment();
+            podcastsFragment = new PodcastsFragment();
 
             // Add fragment to activity
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -38,7 +38,7 @@ public class PodcastsActivity extends AppCompatActivity {
         }
 
         // Create the presenter
-        new PodcastsListPresenter(
+        new PodcastsPresenter(
                 new LoaderProvider(this),
                 getSupportLoaderManager(),
                 Repositories.getInstance(getApplicationContext()),

@@ -23,7 +23,7 @@ public class XmlFeedParser {
 
     public static List<Podcast> readRss(XmlPullParser parser)
             throws XmlPullParserException, IOException {
-        List<Podcast> items = new ArrayList<Podcast>();
+        List<Podcast> items = new ArrayList<>();
         parser.require(XmlPullParser.START_TAG, null, "rss");
         while (parser.next() != XmlPullParser.END_TAG) {
             if (parser.getEventType() != XmlPullParser.START_TAG) {
@@ -41,7 +41,7 @@ public class XmlFeedParser {
 
     public static List<Podcast> readChannel(XmlPullParser parser)
             throws IOException, XmlPullParserException {
-        List<Podcast> items = new ArrayList<Podcast>();
+        List<Podcast> items = new ArrayList<>();
         parser.require(XmlPullParser.START_TAG, null, "channel");
         while (parser.next() != XmlPullParser.END_TAG) {
             if (parser.getEventType() != XmlPullParser.START_TAG) {

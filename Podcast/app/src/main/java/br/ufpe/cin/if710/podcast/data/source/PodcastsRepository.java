@@ -54,7 +54,9 @@ public class PodcastsRepository implements PodcastsDataSource {
 
             @Override
             protected void onPostExecute(List<Podcast> podcasts) {
-                callback.onPodcastsLoaded(podcasts);
+                if (callback != null) {
+                    callback.onPodcastsLoaded(podcasts);
+                }
             }
         }.execute();
     }
@@ -65,18 +67,13 @@ public class PodcastsRepository implements PodcastsDataSource {
     }
 
     @Override
-    public void setDownloaded(long podcastId, String uri) {
-        podcastsLocalDataSource.setDownloaded(podcastId, uri);
+    public void setPodcastUri(long podcastId, String uri) {
+        podcastsLocalDataSource.setPodcastUri(podcastId, uri);
     }
 
     @Override
     public void setPodcastState(long podcastId, int state) {
         podcastsLocalDataSource.setPodcastState(podcastId, state);
-    }
-
-    @Override
-    public void removePodcastLocalUri(int podcastId) {
-        podcastsLocalDataSource.removePodcastLocalUri(podcastId);
     }
 
     private void refreshLocalDataSource(List<Podcast> podcasts) {

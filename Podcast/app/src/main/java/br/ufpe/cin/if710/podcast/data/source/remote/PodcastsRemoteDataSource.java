@@ -39,7 +39,9 @@ public class PodcastsRemoteDataSource implements PodcastsDataSource {
             e.printStackTrace();
         }
 
-        callback.onPodcastsLoaded(itemList);
+        if (callback != null) {
+            callback.onPodcastsLoaded(itemList);
+        }
     }
 
     @Override
@@ -48,17 +50,12 @@ public class PodcastsRemoteDataSource implements PodcastsDataSource {
     }
 
     @Override
-    public void setDownloaded(long podcastId, String uri) {
+    public void setPodcastUri(long podcastId, String uri) {
         // since this is an RSS feed we are not manipulating data
     }
 
     @Override
-    public void setPodcastState(long id, int state) {
-        // since this is an RSS feed we are not manipulating data
-    }
-
-    @Override
-    public void removePodcastLocalUri(int podcastId) {
+    public void setPodcastState(long podcastId, int state) {
         // since this is an RSS feed we are not manipulating data
     }
 
