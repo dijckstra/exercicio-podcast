@@ -31,9 +31,10 @@ Finalmente, acesse a página do BatteryHistorian (criado pelo Docker) e adicione
 
 Cada uma das imagens abaixo representa uma sessão de uso do aplicativo. Cada sessão durou cerca de cinco minutos e consistiu em abrir o aplicativo pela primeira vez (consequentemente acessando a rede e baixando a lista de episódios do podcast), seguido do download de um episódio e de sua reprodução (do último minuto); todo o fluxo foi feito com o aplicativo em primeiro plano e com o aparelho ligado na primeira imagem, e com o app minimizado e a tela travada na segunda. Cada barra presente em alguma linha que descreve um componente do sistema representa um segmento no qual o componente está ativo durante a sessão e, consequentemente, consumindo bateria. O gráfico não mostra o quanto da bateria foi usado pelo componente; apenas que o componente estava ativo. O eixo horontal representa o tempo decorrido da sessão.
 
-// todo add imgaes
+![Sessão nº1](../battery-1.png?raw=true)
+![Sessão nº2](../battery-2.png?raw=true)
 
 Além disso, é possivel comparar dois _bug reports_ e visualizar as diferenças lado a lado. Por exemplo, a imagem abaixo descreve a porcentagem de bateria consumida em cada processo:
 
-// todo add image
+![Sessão nº2](../battery-3.png?raw=true)
 
