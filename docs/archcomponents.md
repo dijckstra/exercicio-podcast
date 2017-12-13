@@ -17,27 +17,27 @@ Alguns atributos precisaram ser anotados com `@ColumnInfo`, pois o nome da colun
 
 Cada método da interface `PodcastLocalDataSource` corresponde a uma _query_ no banco de dados. Portanto, a interface `PodcastsDao` possui os mesmos métodos anotados com uma _query_ que representa a operação realizada no banco de dados. Por exemplo, o seguinte método atualiza o episódio no bandco de dados com o caminho do arquivo baixado:
 
-```
+```java
 void setPodcastUri(long podcastId, String uri);
 ```
 
 Este metódo, na interface do DAO, se transforma em:
 
-```
+```java
 @Query("UPDATE episodes SET state = :state WHERE _id = :podcastId")
 int setPodcastState(long podcastId, int state);
 ```
 
 ### Passo 3: Criação do `PodcastsDatabase`
 
-`PodcastsDatabase` é o substituto da classe `PodcastDatabaseHelper`. Assim como o _helper_, ele é um _singleton_, e possui apenas um atributo `PodcastDao` (caso houvesse mais entidades, cada uma teria um DAO e cada DAO seria um atributo desta classe). A classe é anotada com `@Database`, que recebe a lista das classes entidade e a versão. `PodcastsDatabase` será usada em `PodcastProvider`, que é o `ContentProvider` acesado pela aplicação.
+`PodcastsDatabase` é o substituto da classe `PodcastDatabaseHelper`. Assim como o _helper_, ele é um _singleton_, e possui apenas um atributo `PodcastDao` (caso houvesse mais entidades, cada uma teria um DAO e cada DAO seria um atributo desta classe). A classe é anotada com `@Database`, que recebe a lista das classes entidade e a versão. `PodcastsDatabase` será usada em `PodcastProvider`, que é o `ContentProvider` acessado pela aplicação.
 
 ### Passo 4: Substituir `PodcastDatabaseHelper` pelo `PodcastsDatabase`
 
 O último passo consiste em substituir o código que utiliza o `PodcastDatabaseHelper` por chamadas do `PodcastsDatabase`. A quantidade de código _boilerplate_ é reduzida, como no exemplo seguinte:
 
-*Com* `PodcastDatabaseHelper`
-```
+__Com__ `PodcastDatabaseHelper`
+```java
 @Override
     public Cursor query(@NonNull Uri uri, String[] projection, String selection,
                         String[] selectionArgs, String sortOrder) {
@@ -76,8 +76,8 @@ O último passo consiste em substituir o código que utiliza o `PodcastDatabaseH
     }
 ```
 
-*Com* `PodcastsDatabase`
-```
+**Com** `PodcastsDatabase`
+```java
 @Override
     public Cursor query(@NonNull Uri uri, String[] projection, String selection,
                         String[] selectionArgs, String sortOrder) {
