@@ -6,7 +6,7 @@ Este arquivo documentará o processo de implementação dos _Architecture Compon
 
 Esta seção descreverá os passos que foram realizados para alterar a implementação antiga do banco de dados (usando `SQLiteDatabase` e sua classe de conveniência `SqliteOpenHelper`) para a implementação da bibloteca de persistência de dados Room. Room fornece uma maneira fácil de converter objetos Java para dados de um banco relacional e prover uma interface bastante simplificada para persistência de itens.
 
-[https://github.com/dijckstra/exercicio-podcast/commit/181612b0badd1c2ceb7a9efe077b7c01a1195c09](Este commit) contém as mudanças feitas para que a aplicação passe a usar Room.
+[Este commit](https://github.com/dijckstra/exercicio-podcast/commit/181612b0badd1c2ceb7a9efe077b7c01a1195c09) contém as mudanças feitas para que a aplicação passe a usar Room.
 
 ### Passo 1: Identificar entidades
 
