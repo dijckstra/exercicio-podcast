@@ -10,12 +10,12 @@ Esta seção descreverá os passos que foram realizados para alterar a implement
 
 ### Passo 1: Identificar entidades
 
-No projeto de Podcasts, a camada de dados possui apenas um repositório - o de episódios. Portanto, a classe Podcast é a entidade a ser convertida usando a anotação @Entity.
-Alguns atributos precisaram ser anotados com @ColumnInfo, pois o nome da coluna na tabela é diferente do nome do atributo. Além disso, getters e setters precisaram ser gerados, para que a biblioteca funcione normalmente.
+No projeto de Podcasts, a camada de dados possui apenas um repositório - o de episódios. Portanto, a classe `Podcast` é a entidade a ser convertida usando a anotação `@Entity`.
+Alguns atributos precisaram ser anotados com `@ColumnInfo`, pois o nome da coluna na tabela é diferente do nome do atributo. Além disso, getters e setters precisaram ser gerados, para que a biblioteca funcione normalmente.
 
 ### Passo 2: Criação do DAO (Data Access Object)
 
-Cada método da interface PodcastLocalDataSource corresponde a uma _query_ no banco de dados. Portanto, a interface PodcastsDao possui os mesmos métodos anotados com uma _query_ que representa a operação realizada no banco de dados. Por exemplo, o seguinte método atualiza o episódio no bandco de dados com o caminho do arquivo baixado:
+Cada método da interface `PodcastLocalDataSource` corresponde a uma _query_ no banco de dados. Portanto, a interface `PodcastsDao` possui os mesmos métodos anotados com uma _query_ que representa a operação realizada no banco de dados. Por exemplo, o seguinte método atualiza o episódio no bandco de dados com o caminho do arquivo baixado:
 
 ```
 void setPodcastUri(long podcastId, String uri);
@@ -28,9 +28,9 @@ Este metódo, na interface do DAO, se transforma em:
 int setPodcastState(long podcastId, int state);
 ```
 
-### Passo 3: Criação do PodcastsDatabase
+### Passo 3: Criação do `PodcastsDatabase`
 
-PodcastsDatabase é o substituto da classe PodcastDatabaseHelper. Assim como o _helper_, ele é um singleton, e possui apenas um atributo PodcastDao (caso houvesse mais entidades, cada uma teria um DAO e cada DAO seria um atributo desta classe). A classe é anotada com @Database, que recebe a lista das classes entidade e a versão. PodcastsDatabase será usada em `PodcastProvider`, que é o ContentProvider acesado pela aplicação.
+`PodcastsDatabase` é o substituto da classe `PodcastDatabaseHelper`. Assim como o _helper_, ele é um _singleton_, e possui apenas um atributo `PodcastDao` (caso houvesse mais entidades, cada uma teria um DAO e cada DAO seria um atributo desta classe). A classe é anotada com `@Database`, que recebe a lista das classes entidade e a versão. `PodcastsDatabase` será usada em `PodcastProvider`, que é o `ContentProvider` acesado pela aplicação.
 
 ### Passo 4: Substituir `PodcastDatabaseHelper` pelo `PodcastsDatabase`
 
