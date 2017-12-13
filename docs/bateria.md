@@ -1,6 +1,6 @@
 # Uso da bateria
 
-Diversos fatores afetam o nível de bateria do aparelho, desde requisições à rede ou com o uso de recusrsos do SO, como o uso de wake locks. Esta seção apresentará o histórico de uso de bateria do aparelho, durante uma sessão do aplicativo, usando o [batterystats/Battery Historian](https://developer.android.com/studio/profile/battery-historian.html)
+Diversos fatores afetam o nível de bateria do aparelho, desde requisições à rede ou com o uso de recusrsos do SO, como o uso de wake locks. Esta seção apresentará o histórico de uso de bateria do aparelho, durante duas sessões do aplicativo, usando o [batterystats/Battery Historian](https://developer.android.com/studio/profile/battery-historian.html).
 
 ## Passos para a coleta de métricas de uso de bateria
 
