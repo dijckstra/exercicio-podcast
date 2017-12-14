@@ -8,6 +8,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.squareup.leakcanary.RefWatcher;
+
+import br.ufpe.cin.if710.podcast.PodcastApplication;
 import br.ufpe.cin.if710.podcast.R;
 import br.ufpe.cin.if710.podcast.data.Podcast;
 
@@ -39,6 +42,14 @@ public class PodcastDetailFragment extends Fragment implements PodcastDetailCont
     public void onResume() {
         super.onResume();
         presenter.loadPodcast();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        RefWatcher refWatcher = PodcastApplication.getRefWatcher(getActivity());
+        refWatcher.watch(this);
     }
 
     // View contract methods

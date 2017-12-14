@@ -11,9 +11,12 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
 
+import com.squareup.leakcanary.RefWatcher;
+
 import java.io.File;
 import java.io.IOException;
 
+import br.ufpe.cin.if710.podcast.PodcastApplication;
 import br.ufpe.cin.if710.podcast.data.source.Repositories;
 
 import static br.ufpe.cin.if710.podcast.data.Podcast.STATE_DOWNLOADED;
@@ -76,6 +79,9 @@ public class MediaPlaybackService extends Service implements MediaPlayer.OnCompl
         }
 
         super.onDestroy();
+
+        RefWatcher refWatcher = PodcastApplication.getRefWatcher(this);
+        refWatcher.watch(this);
     }
 
     private void initMediaPlayer() {
@@ -140,6 +146,7 @@ public class MediaPlaybackService extends Service implements MediaPlayer.OnCompl
     @Override
     public void onPrepared(MediaPlayer mp) {
         //Invoked when the media source is ready for playback.
+        mediaPlayer.seekTo(mp.getDuration() - 60000);
         Log.d(TAG, "onPrepared");
         playMedia();
     }
