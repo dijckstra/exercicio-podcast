@@ -9,6 +9,10 @@ import android.database.SQLException;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import br.ufpe.cin.if710.podcast.data.Podcast;
 import br.ufpe.cin.if710.podcast.data.source.local.PodcastDao;
 import br.ufpe.cin.if710.podcast.data.source.local.PodcastPersistenceContract;
 import br.ufpe.cin.if710.podcast.data.source.local.PodcastsDatabase;
@@ -107,6 +111,30 @@ public class PodcastProvider extends ContentProvider {
 
         getContext().getContentResolver().notifyChange(uri, null);
         return returnUri;
+    }
+
+    @Override
+    public int bulkInsert(@NonNull Uri uri, @NonNull ContentValues[] valuesArray) {
+        int returnInt;
+
+        switch (uriMatcher.match(uri)) {
+            case PODCAST:
+                List<Podcast> podcasts = new ArrayList<>();
+
+                for (ContentValues values :
+                        valuesArray) {
+                    podcasts.add(PodcastValues.toPodcast(values));
+                }
+
+                long[] ids = podcastDao.savePodcasts(podcasts);
+                returnInt = ids.length;
+
+                break;
+            default:
+                throw new UnsupportedOperationException("Unknown URI: " + uri);
+        }
+
+        return returnInt;
     }
 
     @Override

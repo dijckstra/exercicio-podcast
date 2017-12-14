@@ -50,6 +50,11 @@ public class PodcastsRemoteDataSource implements PodcastsDataSource {
     }
 
     @Override
+    public void savePodcasts(List<Podcast> podcasts) {
+        // since this is an RSS feed we are not manipulating data
+    }
+
+    @Override
     public void setPodcastUri(long podcastId, String uri) {
         // since this is an RSS feed we are not manipulating data
     }

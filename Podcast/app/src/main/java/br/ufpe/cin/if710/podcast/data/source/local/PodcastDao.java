@@ -6,6 +6,8 @@ import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
 import android.database.Cursor;
 
+import java.util.List;
+
 import br.ufpe.cin.if710.podcast.data.Podcast;
 
 @Dao
@@ -22,6 +24,9 @@ public interface PodcastDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     long savePodcast(Podcast podcast);
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    long[] savePodcasts(List<Podcast> podcasts);
 
     @Query("UPDATE episodes SET download_uri = :uri WHERE _id = :podcastId")
     int setFileUri(long podcastId, String uri);

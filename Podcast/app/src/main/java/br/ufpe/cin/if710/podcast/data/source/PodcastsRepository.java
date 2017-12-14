@@ -46,7 +46,7 @@ public class PodcastsRepository implements PodcastsDataSource {
 
                 // If the retrieval was successful, update the local data
                 if (podcasts != null) {
-                    refreshLocalDataSource(podcasts);
+                    savePodcasts(podcasts);
                 }
 
                 return podcasts;
@@ -67,6 +67,11 @@ public class PodcastsRepository implements PodcastsDataSource {
     }
 
     @Override
+    public void savePodcasts(List<Podcast> podcasts) {
+        podcastsLocalDataSource.savePodcasts(podcasts);
+    }
+
+    @Override
     public void setPodcastUri(long podcastId, String uri) {
         podcastsLocalDataSource.setPodcastUri(podcastId, uri);
     }
@@ -74,11 +79,5 @@ public class PodcastsRepository implements PodcastsDataSource {
     @Override
     public void setPodcastState(long podcastId, int state) {
         podcastsLocalDataSource.setPodcastState(podcastId, state);
-    }
-
-    private void refreshLocalDataSource(List<Podcast> podcasts) {
-        for (Podcast podcast : podcasts) {
-            podcastsLocalDataSource.savePodcast(podcast);
-        }
     }
 }

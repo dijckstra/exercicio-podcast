@@ -3,6 +3,9 @@ package br.ufpe.cin.if710.podcast.data.source.local;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 
+import java.util.Collections;
+import java.util.List;
+
 import br.ufpe.cin.if710.podcast.data.Podcast;
 import br.ufpe.cin.if710.podcast.data.source.PodcastValues;
 import br.ufpe.cin.if710.podcast.data.source.PodcastsDataSource;
@@ -32,6 +35,17 @@ public class PodcastsLocalDataSource implements PodcastsDataSource {
     public void savePodcast(Podcast podcast) {
         ContentValues values = PodcastValues.fromPodcast(podcast);
         contentResolver.insert(PodcastPersistenceContract.PodcastEntry.buildPodcastsUri(), values);
+    }
+
+    @Override
+    public void savePodcasts(List<Podcast> podcasts) {
+        ContentValues[] bulkValues = new ContentValues[podcasts.size()];
+
+        for (int i = 0; i < podcasts.size(); i++) {
+            bulkValues[i] = PodcastValues.fromPodcast(podcasts.get(i));
+        }
+
+        contentResolver.bulkInsert(PodcastPersistenceContract.PodcastEntry.buildPodcastsUri(), bulkValues);
     }
 
     @Override
