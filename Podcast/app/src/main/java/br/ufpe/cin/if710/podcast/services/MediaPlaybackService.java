@@ -146,7 +146,6 @@ public class MediaPlaybackService extends Service implements MediaPlayer.OnCompl
     @Override
     public void onPrepared(MediaPlayer mp) {
         //Invoked when the media source is ready for playback.
-        mediaPlayer.seekTo(mp.getDuration() - 60000);
         Log.d(TAG, "onPrepared");
         playMedia();
     }
